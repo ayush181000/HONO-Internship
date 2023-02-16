@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const bookSchema = mongoose.Schema(
     {
-        name: {
+        title: {
             type: String,
             required: true,
         },
@@ -14,7 +14,7 @@ const bookSchema = mongoose.Schema(
             type: Number,
             required: true
         },
-        category: {
+        genre: {
             type: String,
             required: true,
             enum: ['fiction', 'non-fiction', 'biography', 'poetry', 'drama', 'other']

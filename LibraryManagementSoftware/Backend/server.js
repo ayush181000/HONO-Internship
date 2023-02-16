@@ -5,6 +5,7 @@ import morgan from "morgan";
 import colors from 'colors';
 
 import authorRoutes from './routes/authorRoutes.js';
+import bookRoutes from './routes/bookRoutes.js';
 
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
@@ -25,6 +26,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/author', authorRoutes);
+app.use('/book', bookRoutes);
 
 // Middleware
 app.use(notFound);

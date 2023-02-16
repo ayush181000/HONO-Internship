@@ -6,14 +6,20 @@ import createAuthorValidator from '../validators/createAuthorValidator.js';
 // @route   POST /author
 const createAuthor = asyncHandler(async (req, res) => {
     const { error } = createAuthorValidator(req.body);
-    if (error) {
-        throw new Error(error.details[0].message);
-    }
+    if (error) throw new Error(error.details[0].message);
 
     const { firstName, lastName } = req.body;
-    const author = new Author({ firstName, lastName });
+    const author = await Author.create({ firstName, lastName });
 
     res.status(201).json({ message: 'Author created', data: author });
 });
 
-export { createAuthor }
+// @desc    Get all authors
+// @route   GET /author
+const getAllAuthors = asyncHandler(async (req, res) => {
+    const authors = await Author.find({});
+
+    res.status(200).json({ message: 'Fetched authors successfully', data: authors });
+});
+
+export { createAuthor, getAllAuthors }
