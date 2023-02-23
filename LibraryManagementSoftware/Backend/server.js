@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import morgan from "morgan";
 import colors from 'colors';
+import cors from 'cors';
 
 import authorRoutes from './routes/authorRoutes.js';
 import bookRoutes from './routes/bookRoutes.js';
@@ -20,6 +21,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.use(express.json());
+app.use(cors());
 
 app.get('/', (req, res) => {
     return res.json('Started HONO Library Management server successfully')
