@@ -6,7 +6,7 @@ const createAuthorValidator = (data) => {
     const schema = Joi.object({
         firstName: Joi.string().required(),
         lastName: Joi.string().required(),
-        // id: Joi.objectId().required()
+        image: Joi.string()
     });
     return schema.validate(data);
 };

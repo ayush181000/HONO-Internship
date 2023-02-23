@@ -8,8 +8,7 @@ const createAuthor = asyncHandler(async (req, res) => {
     const { error } = createAuthorValidator(req.body);
     if (error) throw new Error(error.details[0].message);
 
-    const { firstName, lastName } = req.body;
-    const author = await Author.create({ firstName, lastName });
+    const author = await Author.create(req.body);
 
     res.status(201).json({ message: 'Author created', data: author });
 });
