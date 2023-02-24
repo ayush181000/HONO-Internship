@@ -19,7 +19,8 @@ const createBook = asyncHandler(async (req, res) => {
 // @desc    Get all books
 // @route   GET /book
 const getAllBooks = asyncHandler(async (req, res) => {
-    const book = await Book.find({}).populate({ path: 'author', model: 'Author' });
+    const book = await Book.find({}).populate({ path: 'author', model: 'Author', select: 'firstName lastName' });
+
     res.status(200).json({ message: 'Fetched books successfully', data: book });
 });
 
