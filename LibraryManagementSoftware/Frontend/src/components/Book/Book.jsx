@@ -31,7 +31,6 @@ const Book = () => {
       </div>
       {books.map((element) => {
         const id = element._id.toString();
-        console.log(element);
         const authorName =
           element.author.firstName + ' ' + element.author.lastName;
 

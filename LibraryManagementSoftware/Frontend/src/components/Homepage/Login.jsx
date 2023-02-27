@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import Loader from '../shared/Loader/Loader';
+import { useNavigate } from 'react-router-dom';
 
 import './index.css';
 
@@ -12,22 +13,35 @@ import {
 } from '../../redux/auth/reducer';
 import axios from 'axios';
 
-const Login = () => {
-  const dispatch = useDispatch();
+const errorClass = {
+  borderColor: 'red',
+  boxShadow: ' 0 0 0 0.1px red',
+};
 
-  const { loading, error } = useSelector((state) => state.auth);
+const Login = () => {
+  const [loginMode, setLoginMode] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  let { user, loading, error } = useSelector((state) => state.auth);
 
   const {
     register,
     getValues,
     handleSubmit,
-    // eslint-disable-next-line no-unused-vars
     reset,
     formState: { errors },
   } = useForm();
 
-  const [loginMode, setLoginMode] = useState(true);
-  const [showPassword, setShowPassword] = useState(false);
+  useEffect(() => {
+    if (user) {
+      navigate('/books');
+    }
+    reset({ email: 'ayush@gmail.com', password: '123456' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const switchToSignup = () => {
     setLoginMode(!loginMode);
@@ -45,9 +59,18 @@ const Login = () => {
           password: data.password,
         });
 
-        localStorage.setItem('token', response.data.data.token);
-        dispatch({ type: AUTH_LOGIN_SUCCESS, payload: response.data.data });
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.data));
+
+        dispatch({
+          type: AUTH_LOGIN_SUCCESS,
+          payload: {
+            user: response.data.data,
+            token: response.data.token,
+          },
+        });
         reset();
+        navigate('/books');
       } catch (error) {
         dispatch({
           type: AUTH_LOGIN_FAIL,
@@ -64,9 +87,15 @@ const Login = () => {
           password: data.password,
         });
 
-        // console.log(response);
-        dispatch({ type: AUTH_LOGIN_SUCCESS, payload: response.data.data });
+        dispatch({
+          type: AUTH_LOGIN_SUCCESS,
+          payload: {
+            user: response.data.data,
+            token: response.data.token,
+          },
+        });
         reset();
+        navigate('/books');
       } catch (error) {
         console.log(error);
         dispatch({
@@ -75,11 +104,6 @@ const Login = () => {
         });
       }
     }
-  };
-
-  const errorClass = {
-    borderColor: 'red',
-    boxShadow: ' 0 0 0 0.1px red',
   };
 
   return (
@@ -244,7 +268,7 @@ const Login = () => {
             </div>
           )}
 
-          <div className='form-check'>
+          <div className='form-check m-2'>
             <input
               type='checkbox'
               id='showPassword'

@@ -1,15 +1,23 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { AUTH_LOGOUT } from '../../redux/auth/reducer';
 import './index.css';
 
 const Navbar = () => {
-  const user = useSelector((state) => state.auth.user);
-
   const [state, setState] = useState('home');
+
+  const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
 
   const changeState = (page) => {
     setState(page);
+  };
+
+  const logout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    dispatch({ type: AUTH_LOGOUT });
   };
 
   return (
@@ -61,18 +69,32 @@ const Navbar = () => {
 
             {/* My Profile tab */}
             {user && (
-              <li className='nav nav-item'>
-                <Link
-                  to='/myProfile'
-                  onClick={() => changeState('myProfile')}
-                  className={
-                    state === 'myProfile' ? 'nav-link active' : 'nav-link'
-                  }
-                  aria-current='page'
-                >
-                  My Profile
-                </Link>
-              </li>
+              <div>
+                <li className='nav nav-item'>
+                  <Link
+                    to='/myProfile'
+                    onClick={() => changeState('myProfile')}
+                    className={
+                      state === 'myProfile' ? 'nav-link active' : 'nav-link'
+                    }
+                    aria-current='page'
+                  >
+                    My Profile
+                  </Link>
+                </li>
+
+                <li className='nav nav-item'>
+                  <Link
+                    onClick={() => logout()}
+                    className={
+                      state === 'myProfile' ? 'nav-link active' : 'nav-link'
+                    }
+                    aria-current='page'
+                  >
+                    Logout
+                  </Link>
+                </li>
+              </div>
             )}
           </ul>
         </div>

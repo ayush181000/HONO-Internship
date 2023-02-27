@@ -38,10 +38,39 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 
+// @desc    Update password
+// @route   PATCH /user
+const updateUser = asyncHandler(async (req, res, next) => {
+    // 1) Get user from collection
+    const user = await User.findById(req.user._id);
+
+    // 2) check if POSTed current password is correctPassword
+
+    if (req.body.currentPassword && req.body.newPassword) {
+        if (!(await user.correctPassword(req.body.currentPassword, user.password))) {
+            throw new Error('Your current password is wrong');
+        }
+
+        if (req.body.newPassword) user.password = req.body.newPassword;
+    }
+
+
+
+    // 3) If so, update password
+    if (req.body.firstName) user.firstName = req.body.firstName;
+    if (req.body.lastName) user.lastName = req.body.lastName;
+
+    await user.save();
+
+    // $) Log in user, send JWT
+    res.status(200).json({ message: 'Updated user successfully', data: user, token: signToken(user._id) });
+});
+
+
 const signToken = id => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN
     });
 };
 
-export { signupUser, loginUser };
+export { signupUser, loginUser, updateUser };
