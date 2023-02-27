@@ -5,7 +5,7 @@ Joi.objectId = joiObjectId(Joi);
 const signupValidator = (data) => {
     const schema = Joi.object({
         firstName: Joi.string().required(),
-        lastName: Joi.string().required(),
+        lastName: Joi.string().allow(null, ''),
         email: Joi.string().email().required(),
         password: Joi.string().min(6),
     });

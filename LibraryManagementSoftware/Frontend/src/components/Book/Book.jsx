@@ -6,9 +6,7 @@ import Loader from '../shared/Loader/Loader';
 const Book = () => {
   const dispatch = useDispatch();
 
-  const books = useSelector((state) => state.books.books);
-  const error = useSelector((state) => state.books.error);
-  const loader = useSelector((state) => state.books.loading);
+  const { books, error, loading: loader } = useSelector((state) => state.books);
 
   useEffect(() => {
     fetchBooks(dispatch);
@@ -33,6 +31,7 @@ const Book = () => {
       </div>
       {books.map((element) => {
         const id = element._id.toString();
+        console.log(element);
         const authorName =
           element.author.firstName + ' ' + element.author.lastName;
 
