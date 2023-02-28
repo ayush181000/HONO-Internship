@@ -1,6 +1,12 @@
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  UPDATE_USER_FAIL,
+  UPDATE_USER_INITIATED,
+  UPDATE_USER_SUCCESS,
+} from '../../redux/auth/reducer';
 import Loader from '../shared/Loader/Loader';
 
 const errorClass = {
@@ -11,6 +17,7 @@ const errorClass = {
 const MyProfile = () => {
   const [showPassword, setShowPassword] = useState(false);
 
+  const dispatch = useDispatch();
   const { user, error, loading } = useSelector((state) => state.auth);
 
   const {
@@ -32,6 +39,55 @@ const MyProfile = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
+  const onSubmit = async (data) => {
+    dispatch({ type: UPDATE_USER_INITIATED });
+    try {
+      let response;
+
+      const { firstName, lastName, password, newPassword, confirmNewPassword } =
+        data;
+
+      if (
+        password.length > 0 &&
+        newPassword.length > 0 &&
+        confirmNewPassword.length > 0
+      ) {
+        response = await axios.patch(
+          '/auth/me',
+          { firstName, lastName, currentPassword: password, newPassword },
+          {
+            headers: {
+              Authorization: 'Bearer ' + localStorage.getItem('token'),
+            },
+          }
+        );
+      } else {
+        response = await axios.patch(
+          '/auth/me',
+          { firstName, lastName },
+          {
+            headers: {
+              Authorization: 'Bearer ' + localStorage.getItem('token'),
+            },
+          }
+        );
+      }
+
+      localStorage.setItem('user', JSON.stringify(response.data.data));
+      localStorage.setItem('token', response.data.token);
+      dispatch({
+        type: UPDATE_USER_SUCCESS,
+        payload: { user: response.data.data, token: response.data.token },
+      });
+      reset({ password: '', newPassword: '', confirmNewPassword: '' });
+    } catch (error) {
+      dispatch({
+        type: UPDATE_USER_FAIL,
+        payload: error.response.data.message,
+      });
+    }
+  };
+
   return (
     <>
       {error && <div className='alert alert-danger'>{error}</div>}
@@ -42,7 +98,7 @@ const MyProfile = () => {
         </div>
       )}
 
-      <form disabled={loading}>
+      <form disabled={loading} onSubmit={handleSubmit(onSubmit)}>
         <fieldset disabled={loading}>
           <div className='row'>
             <div className='col'>
@@ -92,11 +148,6 @@ const MyProfile = () => {
               disabled
               {...register('email', { required: true })}
             />
-            <small id='emailHelp' className='form-text text-muted'>
-              {errors.email?.type === 'pattern' &&
-                'Please input a valid email address'}
-              {errors.email?.type === 'required' && 'Email is required'}
-            </small>
           </div>
 
           <div className='form-group p-2'>
@@ -108,7 +159,6 @@ const MyProfile = () => {
               id='password'
               placeholder='Password'
               {...register('password', {
-                required: true,
                 minLength: 6,
                 maxLength: 20,
               })}
@@ -127,10 +177,9 @@ const MyProfile = () => {
               style={errors.newPassword ? errorClass : {}}
               type={showPassword ? 'text' : 'password'}
               className='form-control'
-              id='password'
+              id='newPassword'
               placeholder='New Password'
               {...register('newPassword', {
-                required: true,
                 minLength: 6,
                 maxLength: 20,
               })}
@@ -149,13 +198,12 @@ const MyProfile = () => {
               style={errors.confirmNewPassword ? errorClass : {}}
               type={showPassword ? 'text' : 'password'}
               className='form-control'
-              id='passwordConfirm'
+              id='confirmNewPassword'
               placeholder='Password'
               {...register('confirmNewPassword', {
-                required: true,
                 minLength: 6,
                 maxLength: 20,
-                validate: (value) => value === getValues('password'),
+                validate: (value) => value === getValues('newPassword'),
               })}
             />
             <small id='emailHelp' className='form-text text-muted'>
@@ -180,6 +228,13 @@ const MyProfile = () => {
               Show password
             </label>
           </div>
+          <button
+            disabled={Object.keys(errors).length > 0 || loading}
+            type='submit'
+            className='btn btn-success p-2 m-2'
+          >
+            Update
+          </button>
         </fieldset>
       </form>
     </>

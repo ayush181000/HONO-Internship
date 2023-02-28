@@ -21,7 +21,10 @@ const Navbar = () => {
   };
 
   return (
-    <nav className='navbar navbar-expand-lg bg-body-tertiary'>
+    <nav
+      className='navbar navbar-light navbar-expand-lg'
+      style={{ backgroundColor: '#e3f2fd' }}
+    >
       <div className='container-fluid'>
         <Link
           to='/'
@@ -69,32 +72,30 @@ const Navbar = () => {
 
             {/* My Profile tab */}
             {user && (
-              <div>
-                <li className='nav nav-item'>
-                  <Link
-                    to='/myProfile'
-                    onClick={() => changeState('myProfile')}
-                    className={
-                      state === 'myProfile' ? 'nav-link active' : 'nav-link'
-                    }
-                    aria-current='page'
-                  >
-                    My Profile
-                  </Link>
-                </li>
+              <li className='nav nav-item'>
+                <Link
+                  to='/myProfile'
+                  onClick={() => changeState('myProfile')}
+                  className={
+                    state === 'myProfile' ? 'nav-link active' : 'nav-link'
+                  }
+                  aria-current='page'
+                >
+                  My Profile
+                </Link>
+              </li>
+            )}
 
-                <li className='nav nav-item'>
-                  <Link
-                    onClick={() => logout()}
-                    className={
-                      state === 'myProfile' ? 'nav-link active' : 'nav-link'
-                    }
-                    aria-current='page'
-                  >
-                    Logout
-                  </Link>
-                </li>
-              </div>
+            {user && (
+              <li className='nav nav-item'>
+                <Link
+                  onClick={() => logout()}
+                  className='nav-link'
+                  aria-current='page'
+                >
+                  Logout
+                </Link>
+              </li>
             )}
           </ul>
         </div>

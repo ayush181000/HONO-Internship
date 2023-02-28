@@ -21,4 +21,12 @@ const getAllAuthors = asyncHandler(async (req, res) => {
     res.status(200).json({ message: 'Fetched authors successfully', data: authors });
 });
 
-export { createAuthor, getAllAuthors }
+const getAuthorById = asyncHandler(async (req, res) => {
+    const author = await Author.findById(req.params.id);
+
+    if (!author) throw new Error('Author not found');
+
+    res.status(200).json({ message: 'Fetched author successfully', data: author });
+})
+
+export { createAuthor, getAllAuthors, getAuthorById }

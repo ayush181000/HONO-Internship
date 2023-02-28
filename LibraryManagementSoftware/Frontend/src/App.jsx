@@ -2,11 +2,12 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import Book from './components/Book/Book';
-import Author from './components/Author/Author';
+import AuthorList from './components/Author/AuthorList';
 import Homepage from './components/Homepage/Homepage';
 import MyProfile from './components/MyProfile/MyProfile';
 import { useDispatch, useSelector } from 'react-redux';
 import { AUTH_LOADED } from './redux/auth/reducer';
+import Author from './components/Author/Author/Author';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -27,8 +28,9 @@ const App = () => {
       <Navbar />
       <Routes>
         <Route path='/' element={<Homepage />} />
-        <Route path='/books' element={<Book />} />
-        <Route path='/authors' element={<Author />} />
+        <Route path='books' element={<Book />} />
+        <Route path='authors' element={<AuthorList />} />
+        <Route path='authors/:id' element={<Author />} />
         <Route
           path='/myProfile'
           element={!userState ? <Navigate to='/' /> : <MyProfile />}
