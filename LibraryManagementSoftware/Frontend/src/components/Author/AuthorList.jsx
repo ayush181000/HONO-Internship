@@ -7,11 +7,7 @@ import Loader from '../shared/Loader/Loader';
 const AuthorList = () => {
   const dispatch = useDispatch();
 
-  const {
-    authors,
-    error,
-    loading: loader,
-  } = useSelector((state) => state.authors);
+  const { authors, error, loading } = useSelector((state) => state.authors);
 
   useEffect(() => {
     fetchAuthors(dispatch);
@@ -20,7 +16,7 @@ const AuthorList = () => {
   return (
     <>
       {error && <div className='alert alert-danger'>{error}</div>}
-      {loader && (
+      {loading && (
         <div style={{ left: '50%', top: '50%', position: 'absolute' }}>
           <Loader />
         </div>

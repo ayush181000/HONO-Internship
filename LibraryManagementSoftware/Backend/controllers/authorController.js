@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler';
 import Author from "../models/authorModel.js";
+import Book from "../models/bookModel.js";
 import createAuthorValidator from '../validators/createAuthorValidator.js';
 
 // @desc    Create new author
@@ -23,10 +24,11 @@ const getAllAuthors = asyncHandler(async (req, res) => {
 
 const getAuthorById = asyncHandler(async (req, res) => {
     const author = await Author.findById(req.params.id);
-
     if (!author) throw new Error('Author not found');
 
-    res.status(200).json({ message: 'Fetched author successfully', data: author });
+    const books = await Book.find({ author: req.params.id });
+
+    res.status(200).json({ message: 'Fetched author successfully', data: { author, books } });
 })
 
 export { createAuthor, getAllAuthors, getAuthorById }

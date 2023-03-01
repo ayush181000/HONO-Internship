@@ -6,7 +6,7 @@ export const FETCH_AUTHOR_ID_SUCCESS = '[Author] Fetch Author Id Success';
 
 const initialState = {
     authors: [],
-    author: null,
+    author: { author: null, books: [] },
     error: null,
     loading: true
 };

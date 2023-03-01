@@ -1,9 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Login from './Login';
 // import Alert from '../shared/Alert/Alert';
 import './index.css';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const Homepage = () => {
+  const navigate = useNavigate();
+  const { user, token } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (user && token) {
+      navigate('/books');
+    }
+  });
+
   return (
     <>
       {/* <Alert message={'Hi'} role={'danger'} /> */}

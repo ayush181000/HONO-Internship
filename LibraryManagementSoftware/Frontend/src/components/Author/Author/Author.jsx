@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { fetchAuthorById } from '../../../redux/author/action';
@@ -8,17 +9,16 @@ const Author = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
 
-  // const [author, setAuthor] = useState({
-  //   image: '',
-  //   firstName: '',
-  //   lastName: '',
-  // });
-
   useEffect(() => {
     fetchAuthorById(dispatch, id);
+    return () => {};
   }, []);
 
-  const { author, error, loading } = useSelector((state) => {
+  const {
+    author: { author, books },
+    error,
+    loading,
+  } = useSelector((state) => {
     return state.authors;
   });
 
@@ -37,27 +37,53 @@ const Author = () => {
           </div>
         </div>
       )}
+
       {loading && (
         <div style={{ left: '50%', top: '50%', position: 'absolute' }}>
           <Loader />
         </div>
       )}
 
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          margin: '15px',
-          alignContent: 'flex-start',
-        }}
-      >
-        <div style={{ width: '200px', height: '200px' }}>
-          <img src={author.image} alt='' />
+      {author && (
+        <div className='container'>
+          <div className='row'>
+            <div className='col-4 m-2'>
+              <img src={author.image} alt='' className='img-fluid' />
+            </div>
+            <div className='col-7 m-2'>
+              <h1>{author.firstName + ' ' + author.lastName}</h1>
+            </div>
+          </div>
         </div>
-        <div style={{ width: '600px', height: '600px' }}>
-          <h1>{author.firstName + ' ' + author.lastName}</h1>
+      )}
+
+      {books.length > 0 && (
+        <div>
+          <table className='table'>
+            <thead className='thead-dark'>
+              <tr>
+                <th scope='col'>#</th>
+                <th scope='col'>Name</th>
+                <th scope='col'>Genre</th>
+                <th scope='col'>Pages</th>
+              </tr>
+            </thead>
+            <tbody>
+              {books.map((book) => {
+                const id = book._id.toString();
+                return (
+                  <tr key={book._id}>
+                    <th scope='row'>{id.slice(19)}</th>
+                    <td>{book.title}</td>
+                    <td>{book.genre}</td>
+                    <td>{book.pages}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
-      </div>
+      )}
     </>
   );
 };

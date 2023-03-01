@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AUTH_LOGOUT } from '../../redux/auth/reducer';
 import './index.css';
 
@@ -9,6 +9,7 @@ const Navbar = () => {
 
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const changeState = (page) => {
     setState(page);
@@ -18,6 +19,7 @@ const Navbar = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     dispatch({ type: AUTH_LOGOUT });
+    navigate('/');
   };
 
   return (

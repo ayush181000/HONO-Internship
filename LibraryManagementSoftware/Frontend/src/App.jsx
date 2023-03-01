@@ -14,6 +14,7 @@ const App = () => {
 
   useEffect(() => {
     if (localStorage.getItem('user') && localStorage.getItem('token')) {
+      // auto login
       const user = JSON.parse(localStorage.getItem('user'));
       const token = localStorage.getItem('token');
 

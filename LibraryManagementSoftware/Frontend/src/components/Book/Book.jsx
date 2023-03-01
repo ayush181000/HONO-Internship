@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react';
-import { fetchBooks } from '../../redux/books/action';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { fetchBooks } from '../../redux/books/action';
 import Loader from '../shared/Loader/Loader';
 
 const Book = () => {
   const dispatch = useDispatch();
 
-  const { books, error, loading: loader } = useSelector((state) => state.books);
+  const { books, error, loading } = useSelector((state) => state.books);
 
   useEffect(() => {
     fetchBooks(dispatch);
@@ -15,7 +16,7 @@ const Book = () => {
   return (
     <>
       {error && <div className='alert alert-danger'>{error}</div>}
-      {loader && (
+      {loading && (
         <div style={{ left: '50%', top: '50%', position: 'absolute' }}>
           <Loader />
         </div>
@@ -37,9 +38,19 @@ const Book = () => {
         return (
           <div className='container' key={element._id}>
             <div className='row'>
-              <div className='col-1 p-2'>{id.slice(21)}</div>
+              <div className='col-1 p-2'>{id.slice(19)}</div>
               <div className='col-4 p-2'>{element.title}</div>
-              <div className='col-4 p-2'>{authorName}</div>
+
+              <div className='col-4 p-2'>
+                <Link
+                  to={`/authors/${element.author._id}`}
+                  aria-current='page'
+                  style={{ textDecoration: 'none', color: 'black' }}
+                >
+                  {authorName}
+                </Link>
+              </div>
+
               <div className='col-2 p-2'>{element.genre}</div>
               <div className='col-1 p-2'>{element.pages}</div>
             </div>
