@@ -5,7 +5,7 @@ import { FETCH_AUTHORS_ERROR, FETCH_AUTHORS_SUCCESS, FETCH_AUTHOR_ID_INITIATED, 
 export const fetchAuthors = async (dispatch) => {
     try {
         const response = await axios.get('author');
-        ;
+
         dispatch({ type: FETCH_AUTHORS_SUCCESS, payload: response.data.data });
     } catch (error) {
         dispatch({ type: FETCH_AUTHORS_ERROR, payload: error.message });

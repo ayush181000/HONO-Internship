@@ -5,7 +5,7 @@ Joi.objectId = joiObjectId(Joi);
 const createBookValidator = (data) => {
     const schema = Joi.object({
         title: Joi.string().required(),
-        genre: Joi.string().required(),
+        genre: Joi.array().required(),
         author: Joi.objectId().required(),
         pages: Joi.number().required(),
     });

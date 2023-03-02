@@ -1,46 +1,47 @@
 import React, { useEffect } from 'react';
-import Login from './Login';
-// import Alert from '../shared/Alert/Alert';
-import './index.css';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+
+import Book from '../Book/Book';
+import SearchBar from '../Search Bar/SearchBar';
+
+import { fetchBooks } from '../../redux/books/action';
 
 const Homepage = () => {
-  const navigate = useNavigate();
   const { user, token } = useSelector((state) => state.auth);
+  const isAuthenticated = user && token;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  let { books, error, loading } = useSelector((state) => state.books);
 
   useEffect(() => {
-    if (user && token) {
-      navigate('/books');
+    fetchBooks(dispatch);
+    if (isAuthenticated) {
+      // all
+    } else {
+      // only public
     }
   });
 
   return (
     <>
-      {/* <Alert message={'Hi'} role={'danger'} /> */}
-      <div className='.bg-secondary.bg-gradient'>
-        <figure className='text-center'>
-          <blockquote className='blockquote'>
-            <p>
-              This website is built under HONO as a part of my internship
-              training
-            </p>
-          </blockquote>
-          <figcaption className='blockquote-footer'>
-            Made By <cite title='Source Title'>Ayush Garg</cite>
-          </figcaption>
-        </figure>
-      </div>
+      <SearchBar />
+      <Book books={books} error={error} loading={loading} />
 
-      <div className='float-container'>
-        <div className='float-child'>
-          <Login />
+      {!isAuthenticated && (
+        <div className='d-flex justify-content-center'>
+          <button
+            type='button'
+            className='btn btn-outline-info btn-lg m-3 p-2'
+            onClick={() => {
+              navigate('/login');
+            }}
+          >
+            Show More
+          </button>
         </div>
-
-        <div className='float-child'>
-          <img src='library.jpeg' className='img-fluid' alt='Library' />
-        </div>
-      </div>
+      )}
     </>
   );
 };

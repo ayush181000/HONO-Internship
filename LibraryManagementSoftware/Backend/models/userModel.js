@@ -1,14 +1,18 @@
 import mongoose from 'mongoose';
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
+import fs from 'fs';
 
+const loadJSON = (path) => JSON.parse(fs.readFileSync(new URL(path, import.meta.url)));
+const config = loadJSON('../config.json');
 
 const userSchema = mongoose.Schema(
     {
+        image: { type: String },
         firstName: { type: String, required: true, trim: true },
         lastName: { type: String, trim: true },
         email: { type: String, required: true, unique: true, trim: true },
-        role: { type: String, required: true, enum: ['user', 'admin'], default: 'user' },
+        role: { type: String, required: true, enum: config.roles, default: 'user' },
         password: { type: String, required: true },
         passwordChangedAt: Date,
         passwordResetToken: String,

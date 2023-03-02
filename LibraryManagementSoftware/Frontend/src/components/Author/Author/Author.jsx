@@ -2,8 +2,12 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { fetchAuthorById } from '../../../redux/author/action';
+
 import Loader from '../../shared/Loader/Loader';
+import Book from '../../Book/Book';
+
+import { fetchAuthorById } from '../../../redux/author/action';
+import { UNSET_AUTHOR } from '../../../redux/author/reducer';
 
 const Author = () => {
   const dispatch = useDispatch();
@@ -11,7 +15,9 @@ const Author = () => {
 
   useEffect(() => {
     fetchAuthorById(dispatch, id);
-    return () => {};
+    return () => {
+      dispatch({ type: UNSET_AUTHOR });
+    };
   }, []);
 
   const {
@@ -57,7 +63,8 @@ const Author = () => {
         </div>
       )}
 
-      {books.length > 0 && (
+      <Book books={books} hideAuthorName={true} />
+      {/* {books.length > 0 && (
         <div>
           <table className='table'>
             <thead className='thead-dark'>
@@ -83,7 +90,7 @@ const Author = () => {
             </tbody>
           </table>
         </div>
-      )}
+      )} */}
     </>
   );
 };

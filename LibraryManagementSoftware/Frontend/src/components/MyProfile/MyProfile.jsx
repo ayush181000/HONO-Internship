@@ -2,12 +2,14 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
+
+import Loader from '../shared/Loader/Loader';
+
 import {
   UPDATE_USER_FAIL,
   UPDATE_USER_INITIATED,
   UPDATE_USER_SUCCESS,
 } from '../../redux/auth/reducer';
-import Loader from '../shared/Loader/Loader';
 
 const errorClass = {
   borderColor: 'red',

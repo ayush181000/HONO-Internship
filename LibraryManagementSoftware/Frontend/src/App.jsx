@@ -1,13 +1,17 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+
 import Navbar from './components/Navbar/Navbar';
-import Book from './components/Book/Book';
 import AuthorList from './components/Author/AuthorList';
 import Homepage from './components/Homepage/Homepage';
 import MyProfile from './components/MyProfile/MyProfile';
+import Author from './components/Author/Author/Author';
+import Login from './components/Login/Login';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { AUTH_LOADED } from './redux/auth/reducer';
-import Author from './components/Author/Author/Author';
+
+import './index.css';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -29,7 +33,7 @@ const App = () => {
       <Navbar />
       <Routes>
         <Route path='/' element={<Homepage />} />
-        <Route path='books' element={<Book />} />
+        <Route path='/login' element={<Login />} />
         <Route path='authors' element={<AuthorList />} />
         <Route path='authors/:id' element={<Author />} />
         <Route
