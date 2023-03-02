@@ -24,4 +24,77 @@ const getAllBooks = asyncHandler(async (req, res) => {
     res.status(200).json({ message: 'Fetched books successfully', data: book });
 });
 
-export { createBook, getAllBooks };
+
+// @desc    Get all books
+// @route   GET /book
+const searchBook = asyncHandler(async (req, res) => {
+    const options = req.query.options || 'all';
+    const searchText = req.query.search || '';
+    console.log(options, searchText)
+    let searchArray = [];
+
+    if (options === 'all') {
+        searchArray = [
+            { title: { $regex: searchText, $options: 'i' } },
+            { author: { $regex: searchText, $options: 'i' } },
+            { genre: { $regex: searchText, $options: 'i' } }
+        ]
+    }
+
+    if (options === 'genre') {
+        searchArray = [
+            { genre: { $regex: searchText, $options: 'i' } }
+        ]
+    }
+
+    if (options === 'title') {
+        searchArray = [
+            { title: { $regex: searchText, $options: 'i' } }
+        ]
+    }
+
+    if (options === 'author') {
+        searchArray = [
+            { "author.firstName": { $regex: searchText, $options: "i" } },
+            { "author.lastName": { $regex: searchText, $options: "i" } }
+        ]
+    }
+
+    const pipeline = [
+        {
+            '$lookup': {
+                'from': 'authors',
+                'localField': 'author',
+                'foreignField': '_id',
+                'as': 'author'
+            }
+        }, {
+            '$unwind': {
+                'path': '$author'
+            }
+        }, {
+            '$project': {
+                "author.image": 0,
+                "author.createdAt": 0,
+                "author.updatedAt": 0,
+            }
+        }, {
+            '$match': {
+                '$or': searchArray
+            }
+        }, {
+            '$sort': {
+                'quantity': -1
+            }
+        }
+
+    ]
+
+    const book = await Book.aggregate(pipeline);
+
+    res.status(200).json({ message: 'Searched books successfully', data: book });
+
+});
+
+
+export { createBook, getAllBooks, searchBook };

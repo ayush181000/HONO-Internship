@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AUTH_LOADED } from './redux/auth/reducer';
 
 import './index.css';
+import SearchPage from './components/SearchPage/SearchPage';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -33,13 +34,15 @@ const App = () => {
       <Navbar />
       <Routes>
         <Route path='/' element={<Homepage />} />
-        <Route path='/login' element={<Login />} />
+        <Route path='login' element={<Login />} />
         <Route path='authors' element={<AuthorList />} />
         <Route path='authors/:id' element={<Author />} />
         <Route
           path='/myProfile'
           element={!userState ? <Navigate to='/' /> : <MyProfile />}
         />
+        <Route path='search/:option/:searchText' element={<SearchPage />} />
+        <Route path='?' element={<SearchPage />} />
       </Routes>
     </BrowserRouter>
   );

@@ -22,11 +22,11 @@ const Homepage = () => {
     } else {
       // only public
     }
-  });
+  }, [dispatch, isAuthenticated]);
 
   return (
     <>
-      <SearchBar />
+      <SearchBar defaultOptionState={'all'} defaultSearchText='' />
       <Book books={books} error={error} loading={loading} />
 
       {!isAuthenticated && (

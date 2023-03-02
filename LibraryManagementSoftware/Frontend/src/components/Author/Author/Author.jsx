@@ -64,33 +64,6 @@ const Author = () => {
       )}
 
       <Book books={books} hideAuthorName={true} />
-      {/* {books.length > 0 && (
-        <div>
-          <table className='table'>
-            <thead className='thead-dark'>
-              <tr>
-                <th scope='col'>#</th>
-                <th scope='col'>Name</th>
-                <th scope='col'>Genre</th>
-                <th scope='col'>Pages</th>
-              </tr>
-            </thead>
-            <tbody>
-              {books.map((book) => {
-                const id = book._id.toString();
-                return (
-                  <tr key={book._id}>
-                    <th scope='row'>{id.slice(19)}</th>
-                    <td>{book.title}</td>
-                    <td>{book.genre}</td>
-                    <td>{book.pages}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )} */}
     </>
   );
 };

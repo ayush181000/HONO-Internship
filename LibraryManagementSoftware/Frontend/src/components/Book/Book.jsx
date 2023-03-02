@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Loader from '../shared/Loader/Loader';
 
-const Book = ({ books, error, loading, hideAuthorName }) => {
+const Book = ({ books, error, loading, hideAuthorName = false }) => {
   return (
     <>
       {error && <div className='alert alert-danger'>{error}</div>}
@@ -20,7 +20,11 @@ const Book = ({ books, error, loading, hideAuthorName }) => {
               book.author.firstName + ' ' + book.author.lastName;
 
             return (
-              <div className='col-4' key={book._id.toString()}>
+              <div
+                className='col-4'
+                style={book.quantity <= 0 ? { opacity: 0.4 } : {}}
+                key={book._id.toString()}
+              >
                 <div className='card m-3'>
                   <img
                     className='card-img-top'
@@ -38,14 +42,19 @@ const Book = ({ books, error, loading, hideAuthorName }) => {
                         <p className='card-text'>{authorName}</p>
                       )}
                     </Link>
+
                     <p className='card-text'>
                       <small className='text-muted'>
-                        {book.genre.toString().replaceAll(',', ' , ')}
+                        {book.genre.toString().replaceAll(',', ' , ')} {' | '}{' '}
+                        {book.pages} pages
                       </small>
                     </p>
-                    {/* <p className='card-text'>
-                      <small className='text-muted'>{book.pages} pages</small>
-                    </p> */}
+
+                    {book.quantity <= 0 && (
+                      <span className='bg-danger badge d-flex justify-content-center'>
+                        Unavailable
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
