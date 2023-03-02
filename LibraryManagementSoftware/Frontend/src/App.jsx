@@ -7,12 +7,12 @@ import Homepage from './components/Homepage/Homepage';
 import MyProfile from './components/MyProfile/MyProfile';
 import Author from './components/Author/Author/Author';
 import Login from './components/Login/Login';
+import SearchPage from './components/SearchPage/SearchPage';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { AUTH_LOADED } from './redux/auth/reducer';
 
 import './index.css';
-import SearchPage from './components/SearchPage/SearchPage';
 
 const App = () => {
   const dispatch = useDispatch();

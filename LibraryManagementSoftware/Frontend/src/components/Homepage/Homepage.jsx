@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Book from '../Book/Book';
 import SearchBar from '../Search Bar/SearchBar';
+// import Footer from '../Footer/Footer';
 
 import { fetchBooks } from '../../redux/books/action';
 
@@ -14,15 +15,11 @@ const Homepage = () => {
   const navigate = useNavigate();
 
   let { books, error, loading } = useSelector((state) => state.books);
+  const limit = isAuthenticated ? -1 : 6;
 
   useEffect(() => {
-    fetchBooks(dispatch);
-    if (isAuthenticated) {
-      // all
-    } else {
-      // only public
-    }
-  }, [dispatch, isAuthenticated]);
+    fetchBooks(dispatch, limit);
+  }, [dispatch, isAuthenticated, limit]);
 
   return (
     <>
@@ -42,6 +39,10 @@ const Homepage = () => {
           </button>
         </div>
       )}
+
+      {/* <div className='d-flex flex-column min-vh-100'>
+        <Footer />
+      </div> */}
     </>
   );
 };

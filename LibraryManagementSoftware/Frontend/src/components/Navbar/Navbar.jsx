@@ -41,21 +41,23 @@ const Navbar = () => {
             </li>
 
             {/* Author tab */}
-            <li className='nav nav-item'>
-              <Link
-                to='/authors'
-                onClick={() => changeState('authors')}
-                className={
-                  state === 'authors'
-                    ? 'btn navbar-brand nav-link active'
-                    : 'btn navbar-brand nav-link'
-                }
-                aria-current='page'
-                style={{ float: 'right' }}
-              >
-                Authors
-              </Link>
-            </li>
+            {user && (
+              <li className='nav nav-item'>
+                <Link
+                  to='/authors'
+                  onClick={() => changeState('authors')}
+                  className={
+                    state === 'authors'
+                      ? 'btn navbar-brand nav-link active'
+                      : 'btn navbar-brand nav-link'
+                  }
+                  aria-current='page'
+                  style={{ float: 'right' }}
+                >
+                  Authors
+                </Link>
+              </li>
+            )}
           </ul>
 
           {/* My Profile tab */}

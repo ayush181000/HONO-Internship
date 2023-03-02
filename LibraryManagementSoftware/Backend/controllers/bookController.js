@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler';
 import Book from "../models/bookModel.js";
+import Transaction from "../models/transactionModel.js";
 import createBookValidator from "../validators/createBookValidator.js";
 
 // @desc    Create new book
@@ -96,5 +97,32 @@ const searchBook = asyncHandler(async (req, res) => {
 
 });
 
+const issueBook = asyncHandler(async (req, res) => {
+    const book = await Book.findById(req.body.bookId);
 
-export { createBook, getAllBooks, searchBook };
+    // check if book exists and available
+    if (!book || book.quantity === 0) throw new Error('Not enough stock. Invalid request');
+
+    // check if supposed return date is less than 4 weeks
+    const { numberOfWeeks } = req.body;
+    if (numberOfWeeks > 4) throw new Error('Book can be issued for maximum 4 weeks');
+
+    const existingTransaction = await Transaction.findOne({ bookId: req.body.bookId, userId: req.user._id, status: 'issued' });
+
+    if (existingTransaction) throw new Error('You have already issued this book');
+
+    const transaction = await Transaction.create({
+        bookId: req.body.bookId,
+        userId: req.user._id,
+        status: 'issued',
+        supposedReturnDate: Date.now() + numberOfWeeks * 7 * 24 * 60 * 60 * 1000
+    });
+
+    res.status(200).json({
+        message: 'Book issued successfully',
+        transaction
+    });
+})
+
+
+export { createBook, getAllBooks, searchBook, issueBook };

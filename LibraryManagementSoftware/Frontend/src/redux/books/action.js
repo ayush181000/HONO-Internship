@@ -2,11 +2,18 @@ import axios from 'axios';
 import { FETCH_BOOKS_ERROR, FETCH_BOOKS_SUCCESS, SEARCH_BOOKS_ERROR, SEARCH_BOOKS_INITIATED, SEARCH_BOOKS_SUCCESS } from "./reducer";
 
 
-export const fetchBooks = async (dispatch) => {
+export const fetchBooks = async (dispatch, limit) => {
     try {
         const response = await axios.get('book');
-        // console.log(response);
-        dispatch({ type: FETCH_BOOKS_SUCCESS, payload: response.data.data });
+
+        let payload;
+        if (limit !== -1) {
+            payload = response.data.data.slice(0, limit);
+        } else {
+            payload = response.data.data;
+        }
+
+        dispatch({ type: FETCH_BOOKS_SUCCESS, payload });
     } catch (error) {
         console.log(error)
         dispatch({ type: FETCH_BOOKS_ERROR, payload: error.message });

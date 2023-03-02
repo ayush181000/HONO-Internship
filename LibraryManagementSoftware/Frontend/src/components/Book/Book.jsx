@@ -1,8 +1,13 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Loader from '../shared/Loader/Loader';
+import IssueBookModal from './IssueBookModal';
 
 const Book = ({ books, error, loading, hideAuthorName = false }) => {
+  const { user, token } = useSelector((state) => state.auth);
+  const isAuthenticated = user && token;
+
   return (
     <>
       {error && <div className='alert alert-danger'>{error}</div>}
@@ -21,7 +26,7 @@ const Book = ({ books, error, loading, hideAuthorName = false }) => {
 
             return (
               <div
-                className='col-4'
+                className='col-2'
                 style={book.quantity <= 0 ? { opacity: 0.4 } : {}}
                 key={book._id.toString()}
               >
@@ -50,10 +55,18 @@ const Book = ({ books, error, loading, hideAuthorName = false }) => {
                       </small>
                     </p>
 
-                    {book.quantity <= 0 && (
-                      <span className='bg-danger badge d-flex justify-content-center'>
+                    {isAuthenticated && book.quantity <= 0 && (
+                      // unavailble class
+                      <span className='w-100 btn btn-md btn-danger'>
                         Unavailable
                       </span>
+                    )}
+
+                    {isAuthenticated && book.quantity > 0 && (
+                      // issue button
+                      <div className='d-flex justify-content-center'>
+                        <IssueBookModal book={book} authorName={authorName} />
+                      </div>
                     )}
                   </div>
                 </div>

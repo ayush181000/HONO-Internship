@@ -16,5 +16,6 @@
     "Other"
   ],
   "defaultQuantity": 50,
-  "roles": ["user", "libraryIncharge", "admin"]
+  "roles": ["user", "libraryIncharge", "admin"],
+  "returnDays": 7
 }
