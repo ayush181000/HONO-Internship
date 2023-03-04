@@ -100,8 +100,21 @@ const MyProfile = () => {
         </div>
       )}
 
-      <form disabled={loading} onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className='m-4'
+        disabled={loading}
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <fieldset disabled={loading}>
+          <div className='text-center'>
+            <img
+              className='rounded-circle img-fluid m-5 '
+              style={{ maxWidth: '250px', height: 'auto' }}
+              src={user.image}
+              alt='Not found'
+            />
+          </div>
+
           <div className='row'>
             <div className='col'>
               <div className='form-group p-2'>

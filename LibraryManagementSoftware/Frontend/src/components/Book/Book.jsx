@@ -26,7 +26,7 @@ const Book = ({ books, error, loading, hideAuthorName = false }) => {
 
             return (
               <div
-                className='col-2'
+                className='col-2 p-0 m-5'
                 style={book.quantity <= 0 ? { opacity: 0.4 } : {}}
                 key={book._id.toString()}
               >
@@ -50,11 +50,13 @@ const Book = ({ books, error, loading, hideAuthorName = false }) => {
 
                     <p className='card-text'>
                       <small className='text-muted'>
-                        {book.genre.toString().replaceAll(',', ' , ')} {' | '}{' '}
+                        {book.genre.toString().replaceAll(',', ' , ')}
+                        <br />
                         {book.pages} pages
                       </small>
                     </p>
 
+                    {/* <div className='card-footer'> */}
                     {isAuthenticated && book.quantity <= 0 && (
                       // unavailble class
                       <span className='w-100 btn btn-md btn-danger'>
@@ -68,6 +70,7 @@ const Book = ({ books, error, loading, hideAuthorName = false }) => {
                         <IssueBookModal book={book} authorName={authorName} />
                       </div>
                     )}
+                    {/* </div> */}
                   </div>
                 </div>
               </div>

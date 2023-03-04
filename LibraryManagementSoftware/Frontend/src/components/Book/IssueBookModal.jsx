@@ -133,6 +133,7 @@ const IssueBookModal = ({ book, authorName }) => {
                     </select>
                   </div>
                 )}
+
                 {bookIssued && (
                   <div>
                     <br />
@@ -142,7 +143,7 @@ const IssueBookModal = ({ book, authorName }) => {
                     Issue Date:{' '}
                     {moment(bookIssued.issueDate).format('DD-MM-YYYY')}
                     <br />
-                    Supposed Return Date:{' '}
+                    Expected Return Date:{' '}
                     {moment(bookIssued.supposedReturnDate).format('DD-MM-YYYY')}
                     <br />
                     <p className='m-0 p-0 d-inline text-danger'>

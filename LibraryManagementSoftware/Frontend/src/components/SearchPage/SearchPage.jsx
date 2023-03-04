@@ -6,6 +6,7 @@ import { UNSET_SEARCH_BOOKS } from '../../redux/books/reducer';
 import Book from '../Book/Book';
 import SearchBar from '../Search Bar/SearchBar';
 
+// TODO: add auth support
 const SearchPage = () => {
   const { option, searchText } = useParams();
 

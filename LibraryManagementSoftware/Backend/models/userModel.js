@@ -8,7 +8,7 @@ const config = loadJSON('../config.json');
 
 const userSchema = mongoose.Schema(
     {
-        image: { type: String },
+        image: { type: String, default: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png' },
         firstName: { type: String, required: true, trim: true },
         lastName: { type: String, trim: true },
         email: { type: String, required: true, unique: true, trim: true },
