@@ -11,6 +11,7 @@ export const UPDATE_USER_FAIL = '[Auth] Update User Fail';
 const initialState = {
     token: null,
     user: null,
+    myIssuedBooks: [],
     loading: false,
     error: null
 };

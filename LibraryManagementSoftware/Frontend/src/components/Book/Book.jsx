@@ -3,8 +3,16 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Loader from '../shared/Loader/Loader';
 import IssueBookModal from './IssueBookModal';
+import ReturnBookModal from './ReturnBookModal';
 
-const Book = ({ books, error, loading, hideAuthorName = false }) => {
+const Book = ({
+  books,
+  error,
+  loading,
+  hideAuthorName = false,
+  showButton = false,
+  returnButton = false,
+}) => {
   const { user, token } = useSelector((state) => state.auth);
   const isAuthenticated = user && token;
 
@@ -56,21 +64,26 @@ const Book = ({ books, error, loading, hideAuthorName = false }) => {
                       </small>
                     </p>
 
-                    {/* <div className='card-footer'> */}
-                    {isAuthenticated && book.quantity <= 0 && (
+                    {isAuthenticated && book.quantity <= 0 && showButton && (
                       // unavailble class
                       <span className='w-100 btn btn-md btn-danger'>
                         Unavailable
                       </span>
                     )}
 
-                    {isAuthenticated && book.quantity > 0 && (
+                    {isAuthenticated && book.quantity > 0 && showButton && (
                       // issue button
                       <div className='d-flex justify-content-center'>
                         <IssueBookModal book={book} authorName={authorName} />
                       </div>
                     )}
-                    {/* </div> */}
+
+                    {isAuthenticated && book.quantity > 0 && returnButton && (
+                      // return button
+                      <div className='d-flex justify-content-center'>
+                        <ReturnBookModal book={book} authorName={authorName} />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

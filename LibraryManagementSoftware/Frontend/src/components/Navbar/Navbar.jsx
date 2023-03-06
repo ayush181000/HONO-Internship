@@ -65,6 +65,21 @@ const Navbar = () => {
             <ul className='navbar-nav ms-auto mb-2 mb-lg-0'>
               <li className='nav nav-item'>
                 <Link
+                  to='/myIssuedBook'
+                  onClick={() => changeState('myIssuedBook')}
+                  className={
+                    state === 'myIssuedBook'
+                      ? 'btn navbar-brand nav-link active'
+                      : 'btn navbar-brand nav-link'
+                  }
+                  aria-current='page'
+                >
+                  My Issued Books
+                </Link>
+              </li>
+
+              <li className='nav nav-item'>
+                <Link
                   to='/myProfile'
                   onClick={() => changeState('myProfile')}
                   className={

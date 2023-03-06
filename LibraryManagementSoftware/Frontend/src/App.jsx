@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AUTH_LOADED } from './redux/auth/reducer';
 
 import './index.css';
+import MyIssuedBook from './components/My Issued Book/MyIssuedBook';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -37,11 +38,21 @@ const App = () => {
         <Route path='login' element={<Login />} />
         <Route path='authors' element={<AuthorList />} />
         <Route path='authors/:id' element={<Author />} />
+
         <Route
           path='/myProfile'
           element={!userState ? <Navigate to='/' /> : <MyProfile />}
         />
-        <Route path='search/:option/:searchText' element={<SearchPage />} />
+
+        <Route
+          path='/myIssuedBook'
+          element={!userState ? <Navigate to='/' /> : <MyIssuedBook />}
+        />
+
+        <Route
+          path='search/:option/:searchText'
+          element={!userState ? <Navigate to='/' /> : <SearchPage />}
+        />
         <Route path='?' element={<SearchPage />} />
       </Routes>
     </BrowserRouter>

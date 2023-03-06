@@ -97,6 +97,9 @@ const searchBook = asyncHandler(async (req, res) => {
 
 });
 
+
+// @desc    Issue a book
+// @route   POST /book/issue
 const issueBook = asyncHandler(async (req, res) => {
     const book = await Book.findById(req.body.bookId);
 
@@ -118,6 +121,9 @@ const issueBook = asyncHandler(async (req, res) => {
         supposedReturnDate: Date.now() + numberOfWeeks * 7 * 24 * 60 * 60 * 1000
     });
 
+    book.quantity = book.quantity - 1;
+    await book.save();
+
     res.status(200).json({
         message: 'Book issued successfully',
         transaction
@@ -125,4 +131,68 @@ const issueBook = asyncHandler(async (req, res) => {
 })
 
 
-export { createBook, getAllBooks, searchBook, issueBook };
+// @desc    Get my books
+// @route   GET /book/myBooks
+const myBooks = asyncHandler(async (req, res) => {
+
+    const option = req.query.option || 'issued'; // issued or returned
+
+    if (option !== 'issued' && option !== 'returned')
+        throw new Error('Invalid option. Valid options are issued or returned');
+
+    let transaction;
+
+    const pipeline = [{
+        '$match': {
+            'userId': req.user._id,
+            'status': option
+        }
+    },
+    {
+        '$lookup': {
+            'from': 'books',
+            'localField': 'bookId',
+            'foreignField': '_id',
+            'as': 'bookId'
+        }
+    }, {
+        '$unwind': {
+            'path': '$bookId'
+        }
+    }, {
+        '$replaceRoot': {
+            'newRoot': {
+                '$mergeObjects': [
+                    {
+                        'issue': '$$ROOT'
+                    }, '$bookId'
+                ]
+            }
+        }
+    }, {
+        '$project': {
+            'issue.bookId': 0
+        }
+    }, {
+        '$lookup': {
+            'from': 'authors',
+            'localField': 'author',
+            'foreignField': '_id',
+            'as': 'author'
+        }
+    }, {
+        '$unwind': {
+            'path': '$author'
+        }
+    }];
+
+    transaction = await Transaction.aggregate(pipeline);
+
+    res.status(200).json({
+        message: 'Fetched my books successfully',
+        myBooks: transaction
+    });
+})
+
+
+export { createBook, getAllBooks, searchBook, issueBook, myBooks };

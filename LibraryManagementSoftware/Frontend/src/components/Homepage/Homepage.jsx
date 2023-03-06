@@ -24,7 +24,12 @@ const Homepage = () => {
   return (
     <>
       <SearchBar defaultOptionState={'all'} defaultSearchText='' />
-      <Book books={books} error={error} loading={loading} />
+      <Book
+        books={books}
+        error={error}
+        loading={loading}
+        showButton={isAuthenticated}
+      />
 
       {!isAuthenticated && (
         <div className='d-flex justify-content-center'>
