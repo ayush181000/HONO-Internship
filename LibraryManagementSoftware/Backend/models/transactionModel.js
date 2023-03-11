@@ -26,6 +26,7 @@ const transactionSchema = mongoose.Schema(
             type: Date,
             default: Date.now() + config.returnDays * 24 * 60 * 60 * 1000
         },
+        deliveryAddress: { type: String, required: true },
         returnDate: { type: Date },
         finePaid: { type: Number, default: 0 },
         fineTransactionId: { type: String },

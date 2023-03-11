@@ -109,10 +109,24 @@ const issueBook = asyncHandler(async (req, res) => {
     if (!book || book.quantity === 0) throw new Error('Not enough stock. Invalid request');
 
     // check if supposed return date is less than 4 weeks
-    const { numberOfWeeks } = req.body;
-    if (numberOfWeeks > 4) throw new Error('Book can be issued for maximum 4 weeks');
+    let numberOfWeeks = req.body.numberOfWeeks || 1;
+    let { deliveryAddress } = req.body;
 
-    const existingTransaction = await Transaction.findOne({ bookId: req.body.bookId, userId: req.user._id, status: 'issued' });
+    if (numberOfWeeks > 4 || numberOfWeeks < 0) {
+        res.status(400);
+        throw new Error('Book can be issued for maximum 4 weeks');
+    }
+
+    if (!deliveryAddress) {
+        res.status(400);
+        throw new Error('Delivery address is required');
+    }
+
+    const existingTransaction = await Transaction.findOne({
+        bookId: req.body.bookId,
+        userId: req.user._id,
+        status: 'issued',
+    });
 
     if (existingTransaction) throw new Error('You have already issued this book');
 
@@ -120,7 +134,8 @@ const issueBook = asyncHandler(async (req, res) => {
         bookId: req.body.bookId,
         userId: req.user._id,
         status: 'issued',
-        supposedReturnDate: Date.now() + numberOfWeeks * 7 * 24 * 60 * 60 * 1000
+        supposedReturnDate: Date.now() + numberOfWeeks * 7 * 24 * 60 * 60 * 1000,
+        deliveryAddress
     });
 
     book.quantity = book.quantity - 1;
@@ -214,7 +229,7 @@ const returnBook = asyncHandler(async (req, res) => {
     const fine = diff > 0 ? diff * 5 : 0;
 
     if (fine && transaction.finePaid !== fine) {
-        res.status(409);
+        res.status(400);
         throw new Error(`Fine not paid. Fine paid : Rs.${transaction.finePaid} and fine due : Rs.${fine}`);
     }
 

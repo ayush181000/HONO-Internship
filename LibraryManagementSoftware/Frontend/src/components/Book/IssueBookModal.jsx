@@ -16,6 +16,7 @@ import {
 const IssueBookModal = ({ book, authorName }) => {
   const [show, setShow] = useState(false);
   const [duration, setDuration] = useState('1');
+  const [address, setAddress] = useState('');
   const dispatch = useDispatch();
 
   const handleClose = () => {
@@ -31,6 +32,7 @@ const IssueBookModal = ({ book, authorName }) => {
       const response = await axios.post('/book/issue', {
         bookId: book._id.toString(),
         numberOfWeeks: +duration,
+        deliveryAddress: address,
       });
 
       // console.log(response.data.transaction);
@@ -104,23 +106,37 @@ const IssueBookModal = ({ book, authorName }) => {
 
                 {!bookIssued && (
                   <div>
-                    <label className='mt-4'>
-                      Choose the duration (in weeks)
-                    </label>
-                    <select
-                      type='select'
-                      className='form-select'
-                      aria-required
-                      value={duration}
-                      onChange={(e) => setDuration(e.target.value)}
-                    >
-                      <option defaultValue value='1'>
-                        1
-                      </option>
-                      <option value='2'>2</option>
-                      <option value='3'>3</option>
-                      <option value='4'>4</option>
-                    </select>
+                    <div>
+                      <label className='mt-4'>
+                        Choose the duration (in weeks)
+                      </label>
+                      <select
+                        type='select'
+                        className='form-select'
+                        aria-required
+                        value={duration}
+                        onChange={(e) => setDuration(e.target.value)}
+                      >
+                        <option defaultValue value='1'>
+                          1
+                        </option>
+                        <option value='2'>2</option>
+                        <option value='3'>3</option>
+                        <option value='4'>4</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className='mt-4'>
+                        Please enter your address for delivery
+                      </label>
+                      <input
+                        type='text'
+                        className='form-control'
+                        required
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                      />
+                    </div>
                   </div>
                 )}
 

@@ -1,0 +1,2 @@
+change password modal in Profile
+add address option while renting
