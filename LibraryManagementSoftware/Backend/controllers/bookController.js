@@ -1,7 +1,9 @@
 import asyncHandler from 'express-async-handler';
+import moment from 'moment';
 import Book from "../models/bookModel.js";
 import Transaction from "../models/transactionModel.js";
 import createBookValidator from "../validators/createBookValidator.js";
+import finePaymentValidator from "../validators/finePaymentValidator.js";
 
 // @desc    Create new book
 // @route   POST /book
@@ -195,4 +197,54 @@ const myBooks = asyncHandler(async (req, res) => {
 })
 
 
-export { createBook, getAllBooks, searchBook, issueBook, myBooks };
+// @desc    Return a book
+// @route   POST /book/return
+const returnBook = asyncHandler(async (req, res) => {
+    const transaction = await Transaction.findOne({ userId: req.user._id, bookId: req.body.bookId, status: 'issued' });
+
+    // console.log(transaction);
+    if (!transaction) {
+        res.status(400);
+        throw new Error('No book issued by you with this id');
+    }
+
+    const endDate = moment(Date.now());
+    const startDate = moment(transaction.supposedReturnDate);
+    const diff = endDate.diff(startDate, 'days');
+    const fine = diff > 0 ? diff * 5 : 0;
+
+    if (fine && transaction.finePaid !== fine) {
+        res.status(409);
+        throw new Error(`Fine not paid. Fine paid : Rs.${transaction.finePaid} and fine due : Rs.${fine}`);
+    }
+
+    transaction.status = 'returned';
+    transaction.returnDate = Date.now();
+    await transaction.save();
+
+    const book = await Book.findByIdAndUpdate(transaction.bookId, { $inc: { quantity: 1 } });
+
+    res.status(200).json({
+        message: 'Book returned successfully'
+    })
+})
+
+const payFine = asyncHandler(async (req, res) => {
+    const { error } = finePaymentValidator(req.body);
+
+    if (error) {
+        res.status(400);
+        throw new Error(error.details[0].message);
+    }
+
+    const { transactionId, finePaid, fineTransactionId } = req.body;
+
+    const updatedTransaction = await Transaction.findByIdAndUpdate(transactionId, { finePaid, fineTransactionId }, { new: true });
+
+    res.status(200).json({
+        message: 'Fine paid successfully',
+        transaction: updatedTransaction
+    });
+})
+
+export { createBook, getAllBooks, searchBook, issueBook, myBooks, returnBook, payFine };
