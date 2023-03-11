@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import Loader from '../shared/Loader/Loader';
 import IssueBookModal from './IssueBookModal';
 import ReturnBookModal from './ReturnBookModal';
+import ViewDetailsModal from './ViewDetailsModal';
 
 const Book = ({
   books,
@@ -12,6 +13,7 @@ const Book = ({
   hideAuthorName = false,
   showButton = false,
   returnButton = false,
+  viewReturnedDetails = false,
 }) => {
   const { user, token } = useSelector((state) => state.auth);
   const isAuthenticated = user && token;
@@ -35,7 +37,9 @@ const Book = ({
             return (
               <div
                 className='col-2 p-0 m-5'
-                style={book.quantity <= 0 ? { opacity: 0.4 } : {}}
+                style={
+                  book.quantity <= 0 && isAuthenticated ? { opacity: 0.4 } : {}
+                }
                 key={book._id.toString()}
               >
                 <div className='card m-3'>
@@ -55,7 +59,6 @@ const Book = ({
                         <p className='card-text'>{authorName}</p>
                       )}
                     </Link>
-
                     <p className='card-text'>
                       <small className='text-muted'>
                         {book.genre.toString().replaceAll(',', ' , ')}
@@ -64,13 +67,13 @@ const Book = ({
                       </small>
                     </p>
 
+                    {/* home page buttons */}
                     {isAuthenticated && book.quantity <= 0 && showButton && (
                       // unavailble class
                       <span className='w-100 btn btn-md btn-danger'>
                         Unavailable
                       </span>
                     )}
-
                     {isAuthenticated && book.quantity > 0 && showButton && (
                       // issue button
                       <div className='d-flex justify-content-center'>
@@ -78,12 +81,24 @@ const Book = ({
                       </div>
                     )}
 
+                    {/* return button */}
                     {isAuthenticated && book.quantity > 0 && returnButton && (
-                      // return button
                       <div className='d-flex justify-content-center'>
                         <ReturnBookModal book={book} authorName={authorName} />
                       </div>
                     )}
+
+                    {/* view returned details */}
+                    {isAuthenticated &&
+                      book.quantity > 0 &&
+                      viewReturnedDetails && (
+                        <div className='d-flex justify-content-center'>
+                          <ViewDetailsModal
+                            book={book}
+                            authorName={authorName}
+                          />
+                        </div>
+                      )}
                   </div>
                 </div>
               </div>

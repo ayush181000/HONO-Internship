@@ -54,25 +54,14 @@ const MyProfile = () => {
         newPassword.length > 0 &&
         confirmNewPassword.length > 0
       ) {
-        response = await axios.patch(
-          '/auth/me',
-          { firstName, lastName, currentPassword: password, newPassword },
-          {
-            headers: {
-              Authorization: 'Bearer ' + localStorage.getItem('token'),
-            },
-          }
-        );
+        response = await axios.patch('/auth/me', {
+          firstName,
+          lastName,
+          currentPassword: password,
+          newPassword,
+        });
       } else {
-        response = await axios.patch(
-          '/auth/me',
-          { firstName, lastName },
-          {
-            headers: {
-              Authorization: 'Bearer ' + localStorage.getItem('token'),
-            },
-          }
-        );
+        response = await axios.patch('/auth/me', { firstName, lastName });
       }
 
       localStorage.setItem('user', JSON.stringify(response.data.data));

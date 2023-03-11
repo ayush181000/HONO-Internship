@@ -1,37 +1,59 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import Loader from '../shared/Loader/Loader';
 import axios from 'axios';
 import moment from 'moment';
-
-import { useDispatch, useSelector } from 'react-redux';
+import Loader from '../shared/Loader/Loader';
 
 const ReturnBookModal = ({ book, authorName }) => {
-  console.log(book.issue);
+  // console.log(book.issue);
   const [show, setShow] = useState(false);
-  const dispatch = useDispatch();
-
-  const {
-    issueBook: { bookIssued, error, loading },
-  } = useSelector((state) => state.books);
-
-  const { token } = useSelector((state) => state.auth);
+  const [fine, setFine] = useState(0);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleClose = () => {
-    // dispatch({ type: UNSET_ISSUE_BOOK });
     setShow(false);
   };
 
-  const handleShow = () => setShow(true);
+  const handleShow = () => {
+    calculateFine();
+    setShow(true);
+  };
+
+  const returnHandler = async () => {
+    setLoading(true);
+    try {
+      if (fine !== 0) {
+        await axios.post('/book/payFine', {
+          transactionId: book.issue._id,
+          finePaid: fine,
+          fineTransactionId: 'randomString',
+        });
+      }
+      const returnBookResponse = await axios.post('/book/return', {
+        bookId: book._id,
+      });
+      if (returnBookResponse.status === 200) {
+        setSuccess('Returned Book Successfully');
+      }
+      setTimeout(() => {
+        handleClose();
+      }, 2000);
+    } catch (error) {
+      setError(error.response.data.message);
+      setLoading(false);
+      return;
+    }
+    setLoading(false);
+  };
 
   const calculateFine = () => {
     const endDate = moment(Date.now());
     const startDate = moment(book.issue.supposedReturnDate);
-
     const diff = endDate.diff(startDate, 'days');
-
-    return diff > 0 ? diff * 5 : 0;
+    if (diff > 0) setFine(diff * 5);
   };
 
   return (
@@ -51,6 +73,7 @@ const ReturnBookModal = ({ book, authorName }) => {
         </Modal.Header>
         <Modal.Body>
           {error && <div className='alert alert-danger'>{error}</div>}
+          {success && <div className='alert alert-success'>{success}</div>}
 
           {loading && (
             <div style={{ left: '50%', top: '50%', position: 'absolute' }}>
@@ -92,7 +115,7 @@ const ReturnBookModal = ({ book, authorName }) => {
                   Return Date:{' '}
                   {moment(book.issue.supposedReturnDate).format('DD-MM-YYYY')}
                   <br />
-                  Fine: {`₹ ${calculateFine()}/-`}
+                  Fine: {`₹ ${fine}/-`}
                 </div>
               </div>
             </div>
@@ -102,11 +125,16 @@ const ReturnBookModal = ({ book, authorName }) => {
           <Button variant='danger' onClick={handleClose} disabled={loading}>
             Close
           </Button>
-          {!bookIssued && (
-            <Button variant='success' onClick={() => {}} disabled={loading}>
-              {calculateFine() === 0 ? 'Confirm Return' : 'Pay Fine'}
-            </Button>
-          )}
+
+          <Button
+            variant='success'
+            onClick={() => {
+              returnHandler();
+            }}
+            disabled={loading}
+          >
+            {fine === 0 ? 'Confirm Return' : 'Pay Fine And Return Book'}
+          </Button>
         </Modal.Footer>
       </Modal>
     </>

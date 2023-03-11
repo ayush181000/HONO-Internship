@@ -28,18 +28,10 @@ const IssueBookModal = ({ book, authorName }) => {
   const issueBookHandler = async () => {
     dispatch({ type: ISSUE_BOOK_INITIATED });
     try {
-      const response = await axios.post(
-        '/book/issue',
-        {
-          bookId: book._id.toString(),
-          numberOfWeeks: +duration,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.post('/book/issue', {
+        bookId: book._id.toString(),
+        numberOfWeeks: +duration,
+      });
 
       // console.log(response.data.transaction);
 
@@ -58,8 +50,6 @@ const IssueBookModal = ({ book, authorName }) => {
   const {
     issueBook: { bookIssued, error, loading },
   } = useSelector((state) => state.books);
-
-  const { token } = useSelector((state) => state.auth);
 
   return (
     <>

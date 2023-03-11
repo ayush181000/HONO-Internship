@@ -15,9 +15,6 @@ const MyIssuedBook = () => {
   const { myBooks, error, loading } = useSelector((state) => {
     return state.books;
   });
-  const { token } = useSelector((state) => {
-    return state.auth;
-  });
 
   const dispatch = useDispatch();
 
@@ -32,9 +29,7 @@ const MyIssuedBook = () => {
   async function getMyBooks() {
     dispatch({ type: GET_MY_ISSUED_BOOK_INITIATED });
     try {
-      const response = await axios.get(`/book/myBooks?option=${page}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(`/book/myBooks?option=${page}`);
 
       // console.log(response);
       dispatch({
@@ -84,6 +79,7 @@ const MyIssuedBook = () => {
           error={error}
           loading={loading}
           returnButton={page === 'issued'}
+          viewReturnedDetails={page === 'returned'}
         />
       )}
     </>

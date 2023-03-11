@@ -14,6 +14,7 @@ import { AUTH_LOADED } from './redux/auth/reducer';
 
 import './index.css';
 import MyIssuedBook from './components/My Issued Book/MyIssuedBook';
+import axios from 'axios';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -23,6 +24,7 @@ const App = () => {
       // auto login
       const user = JSON.parse(localStorage.getItem('user'));
       const token = localStorage.getItem('token');
+      axios.defaults.headers['Authorization'] = 'Bearer ' + token;
 
       dispatch({ type: AUTH_LOADED, payload: { user, token } });
     }
