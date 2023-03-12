@@ -61,6 +61,7 @@ const ChangePasswordModal = () => {
           type: UPDATE_USER_SUCCESS,
           payload: { user: response.data.data, token: response.data.token },
         });
+
         reset({ password: '', newPassword: '', confirmNewPassword: '' });
 
         setTimeout(() => handleClose(), 2000);

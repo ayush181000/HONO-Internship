@@ -61,7 +61,6 @@ const MyProfile = () => {
         type: UPDATE_USER_SUCCESS,
         payload: { user: response.data.data, token: response.data.token },
       });
-      reset({ password: '', newPassword: '', confirmNewPassword: '' });
     } catch (error) {
       dispatch({
         type: UPDATE_USER_FAIL,
