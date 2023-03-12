@@ -2,8 +2,11 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
+import { storage } from '../../firebase';
+import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 
 import Loader from '../shared/Loader/Loader';
+import ChangePasswordModal from './ChangePasswordModal';
 
 import {
   UPDATE_USER_FAIL,
@@ -17,14 +20,15 @@ const errorClass = {
 };
 
 const MyProfile = () => {
-  const [showPassword, setShowPassword] = useState(false);
+  const [imgUrl, setImgUrl] = useState(null);
+  const [image, setImage] = useState('');
+  const [progresspercent, setProgresspercent] = useState(0);
 
   const dispatch = useDispatch();
   const { user, error, loading } = useSelector((state) => state.auth);
 
   const {
     register,
-    getValues,
     handleSubmit,
     reset,
     formState: { errors },
@@ -35,8 +39,6 @@ const MyProfile = () => {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      password: '',
-      confirmPassword: '',
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
@@ -44,25 +46,14 @@ const MyProfile = () => {
   const onSubmit = async (data) => {
     dispatch({ type: UPDATE_USER_INITIATED });
     try {
-      let response;
+      const updatedFields = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+      };
 
-      const { firstName, lastName, password, newPassword, confirmNewPassword } =
-        data;
-
-      if (
-        password.length > 0 &&
-        newPassword.length > 0 &&
-        confirmNewPassword.length > 0
-      ) {
-        response = await axios.patch('/auth/me', {
-          firstName,
-          lastName,
-          currentPassword: password,
-          newPassword,
-        });
-      } else {
-        response = await axios.patch('/auth/me', { firstName, lastName });
-      }
+      if (imgUrl) updatedFields.image = imgUrl;
+      // console.log(updatedFields);
+      const response = await axios.patch('/auth/me', updatedFields);
 
       localStorage.setItem('user', JSON.stringify(response.data.data));
       localStorage.setItem('token', response.data.token);
@@ -77,6 +68,33 @@ const MyProfile = () => {
         payload: error.response.data.message,
       });
     }
+  };
+
+  const sumitPhotoHandler = () => {
+    const file = image;
+
+    if (!file) return;
+
+    const storageRef = ref(storage, `profile_image/${file.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        setProgresspercent(progress);
+      },
+      (error) => {
+        alert(error);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setImgUrl(downloadURL);
+        });
+      }
+    );
   };
 
   return (
@@ -95,6 +113,7 @@ const MyProfile = () => {
         onSubmit={handleSubmit(onSubmit)}
       >
         <fieldset disabled={loading}>
+          {/* profile image */}
           <div className='text-center'>
             <img
               className='rounded-circle img-fluid m-5 '
@@ -104,6 +123,34 @@ const MyProfile = () => {
             />
           </div>
 
+          {/* profile image upload */}
+          <div className='col form-group'>
+            <input
+              type='file'
+              className='form-control '
+              onChange={(e) => setImage(e.target.files[0])}
+            />
+
+            <div className='progress m-1'>
+              <div
+                className='progress-bar progress-bar-striped progress-bar-animated '
+                role='progressbar'
+                aria-valuemin='0'
+                aria-valuemax='100'
+                style={{ width: `${progresspercent}%` }}
+              ></div>
+            </div>
+
+            <button
+              className='btn btn-outline-primary'
+              type='button'
+              onClick={sumitPhotoHandler}
+            >
+              Upload
+            </button>
+          </div>
+
+          {/* first name and last name */}
           <div className='row'>
             <div className='col'>
               <div className='form-group p-2'>
@@ -141,6 +188,8 @@ const MyProfile = () => {
               </div>
             </div>
           </div>
+
+          {/* email address */}
           <div className='form-group p-2'>
             <label>Email address</label>
             <input
@@ -153,85 +202,6 @@ const MyProfile = () => {
               {...register('email', { required: true })}
             />
           </div>
-
-          <div className='form-group p-2'>
-            <label>Old Password</label>
-            <input
-              style={errors.password ? errorClass : {}}
-              type={showPassword ? 'text' : 'password'}
-              className='form-control'
-              id='password'
-              placeholder='Password'
-              {...register('password', {
-                minLength: 6,
-                maxLength: 20,
-              })}
-            />
-            <small id='emailHelp' className='form-text text-muted'>
-              {errors.password?.type === 'minLength' &&
-                'Password should be greater than 6 characters'}
-              {errors.password?.type === 'maxLength' &&
-                'Password should be less than 20 characters'}
-            </small>
-          </div>
-
-          <div className='form-group p-2'>
-            <label>New Password</label>
-            <input
-              style={errors.newPassword ? errorClass : {}}
-              type={showPassword ? 'text' : 'password'}
-              className='form-control'
-              id='newPassword'
-              placeholder='New Password'
-              {...register('newPassword', {
-                minLength: 6,
-                maxLength: 20,
-              })}
-            />
-            <small id='emailHelp' className='form-text text-muted'>
-              {errors.newPassword?.type === 'minLength' &&
-                'Password should be greater than 6 characters'}
-              {errors.newPassword?.type === 'maxLength' &&
-                'Password should be less than 20 characters'}
-            </small>
-          </div>
-
-          <div className='form-group p-2'>
-            <label>Confirm New Password</label>
-            <input
-              style={errors.confirmNewPassword ? errorClass : {}}
-              type={showPassword ? 'text' : 'password'}
-              className='form-control'
-              id='confirmNewPassword'
-              placeholder='Password'
-              {...register('confirmNewPassword', {
-                minLength: 6,
-                maxLength: 20,
-                validate: (value) => value === getValues('newPassword'),
-              })}
-            />
-            <small id='emailHelp' className='form-text text-muted'>
-              {errors.confirmNewPassword?.type === 'minLength' &&
-                'Password should be greater than 6 characters'}
-              {errors.confirmNewPassword?.type === 'maxLength' &&
-                'Password should be less than 20 characters'}
-              {errors.confirmNewPassword?.type === 'validate' &&
-                'Password does not match'}
-            </small>
-          </div>
-
-          <div className='form-check m-2'>
-            <input
-              type='checkbox'
-              id='showPassword'
-              className='form-check-input'
-              placeholder='Show Password'
-              onClick={() => setShowPassword(!showPassword)}
-            />
-            <label className='form-check-label' htmlFor='showPassword'>
-              Show password
-            </label>
-          </div>
           <button
             disabled={Object.keys(errors).length > 0 || loading}
             type='submit'
@@ -239,8 +209,10 @@ const MyProfile = () => {
           >
             Update
           </button>
+          <ChangePasswordModal />
         </fieldset>
       </form>
+      <div className='m-4'></div>
     </>
   );
 };

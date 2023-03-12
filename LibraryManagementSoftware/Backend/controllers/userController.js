@@ -59,6 +59,7 @@ const updateUser = asyncHandler(async (req, res, next) => {
     // 3) If so, update password
     if (req.body.firstName) user.firstName = req.body.firstName;
     if (req.body.lastName) user.lastName = req.body.lastName;
+    if (req.body.image) user.image = req.body.image;
 
     await user.save();
 
