@@ -45,7 +45,6 @@ const updateUser = asyncHandler(async (req, res, next) => {
     const user = await User.findById(req.user._id);
 
     // 2) check if POSTed current password is correctPassword
-
     if (req.body.currentPassword && req.body.newPassword) {
         if (!(await user.correctPassword(req.body.currentPassword, user.password))) {
             throw new Error('Your current password is wrong');
@@ -53,8 +52,6 @@ const updateUser = asyncHandler(async (req, res, next) => {
 
         if (req.body.newPassword) user.password = req.body.newPassword;
     }
-
-
 
     // 3) If so, update password
     if (req.body.firstName) user.firstName = req.body.firstName;
