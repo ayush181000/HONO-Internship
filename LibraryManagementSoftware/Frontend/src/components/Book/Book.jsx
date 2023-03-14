@@ -14,6 +14,7 @@ const Book = ({
   showButton = false,
   returnButton = false,
   viewReturnedDetails = false,
+  showQuantity = false,
 }) => {
   const { user, token } = useSelector((state) => state.auth);
   const isAuthenticated = user && token;
@@ -50,20 +51,28 @@ const Book = ({
                   />
                   <div className='card-body'>
                     <h5 className='card-title'>{book.title}</h5>
-                    <Link
-                      to={`/authors/${book.author._id}`}
-                      aria-current='page'
-                      style={{ textDecoration: 'none', color: 'black' }}
-                    >
-                      {!hideAuthorName && (
+
+                    {!hideAuthorName && (
+                      <Link
+                        to={`/authors/${book.author._id}`}
+                        aria-current='page'
+                        style={{ textDecoration: 'none', color: 'black' }}
+                      >
                         <p className='card-text'>{authorName}</p>
-                      )}
-                    </Link>
+                      </Link>
+                    )}
+
                     <p className='card-text'>
                       <small className='text-muted'>
                         {book.genre.toString().replaceAll(',', ' , ')}
                         <br />
                         {book.pages} pages
+                        {showQuantity && (
+                          <>
+                            <br />
+                            {book.quantity} books left
+                          </>
+                        )}
                       </small>
                     </p>
 

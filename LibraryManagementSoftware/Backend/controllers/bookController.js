@@ -262,4 +262,56 @@ const payFine = asyncHandler(async (req, res) => {
     });
 })
 
-export { createBook, getAllBooks, searchBook, issueBook, myBooks, returnBook, payFine };
+
+// @desc    Get all transactions (LIBRARIAN/ADMIN ONLY)
+// @route   GET /transactions
+const getAllTransactions = asyncHandler(async (req, res) => {
+    const status = 'issued' || req.query.status;
+    const pipeline = [
+        {
+            '$match': {
+                'status': status
+            }
+        }, {
+            '$lookup': {
+                'from': 'books',
+                'localField': 'bookId',
+                'foreignField': '_id',
+                'as': 'book'
+            }
+        }, {
+            '$lookup': {
+                'from': 'users',
+                'localField': 'userId',
+                'foreignField': '_id',
+                'as': 'user'
+            }
+        }, {
+            '$unwind': {
+                'path': '$user'
+            }
+        }, {
+            '$unwind': {
+                'path': '$book'
+            }
+        }, {
+            '$project': {
+                "user.password": 0,
+                "user.passwordChangedAt": 0,
+                "userId": 0,
+                "bookId": 0
+            }
+        }
+    ];
+
+    const transactions = await Transaction.aggregate(pipeline);
+
+    res.status(200).json({
+        message: 'Fetched transactions successfully',
+        transactions
+    });
+})
+
+
+
+export { createBook, getAllBooks, searchBook, issueBook, myBooks, returnBook, payFine, getAllTransactions };

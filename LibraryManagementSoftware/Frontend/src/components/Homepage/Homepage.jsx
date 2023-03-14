@@ -7,6 +7,7 @@ import SearchBar from '../Search Bar/SearchBar';
 // import Footer from '../Footer/Footer';
 
 import { fetchBooks } from '../../redux/books/action';
+import { LIBRARY_INCHARGE, USER } from '../../roles';
 
 const Homepage = () => {
   const { user, token } = useSelector((state) => state.auth);
@@ -16,7 +17,7 @@ const Homepage = () => {
 
   let { books, error, loading } = useSelector((state) => state.books);
   const limit = isAuthenticated ? -1 : 6;
-
+  console.log(isAuthenticated && user.role === 'user');
   useEffect(() => {
     fetchBooks(dispatch, limit);
   }, [dispatch, isAuthenticated, limit]);
@@ -28,7 +29,8 @@ const Homepage = () => {
         books={books}
         error={error}
         loading={loading}
-        showButton={isAuthenticated}
+        showButton={isAuthenticated && user.role === USER}
+        showQuantity={isAuthenticated && user.role === LIBRARY_INCHARGE}
       />
 
       {!isAuthenticated && (

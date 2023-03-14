@@ -10,5 +10,6 @@ router.route('/issue').post(protect, restrictTo('user'), bookController.issueBoo
 router.route('/myBooks').get(protect, restrictTo('user'), bookController.myBooks);
 router.route('/return').post(protect, restrictTo('user'), bookController.returnBook);
 router.route('/payFine').post(protect, restrictTo('user'), bookController.payFine);
+router.route('/transactions').get(protect, restrictTo('libraryIncharge', 'admin'), bookController.getAllTransactions);
 
 export default router;

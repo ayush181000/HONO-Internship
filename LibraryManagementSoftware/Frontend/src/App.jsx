@@ -15,6 +15,8 @@ import { AUTH_LOADED } from './redux/auth/reducer';
 import './index.css';
 import MyIssuedBook from './components/My Issued Book/MyIssuedBook';
 import axios from 'axios';
+import { LIBRARY_INCHARGE } from './roles';
+import AllIssuedBooks from './components/AllIssuedBooks/AllIssuedBooks';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -54,6 +56,16 @@ const App = () => {
         <Route
           path='search/:option/:searchText'
           element={!userState ? <Navigate to='/' /> : <SearchPage />}
+        />
+        <Route
+          path='allIssuedBooks'
+          element={
+            userState && userState.role === LIBRARY_INCHARGE ? (
+              <AllIssuedBooks />
+            ) : (
+              <Navigate to='/' />
+            )
+          }
         />
         <Route path='?' element={<SearchPage />} />
       </Routes>

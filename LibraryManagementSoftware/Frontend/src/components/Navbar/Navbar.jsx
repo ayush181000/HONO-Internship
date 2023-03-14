@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { AUTH_LOGOUT } from '../../redux/auth/reducer';
+import { LIBRARY_INCHARGE, USER } from '../../roles';
 
 import './index.css';
 
@@ -10,6 +11,7 @@ const Navbar = () => {
   const [state, setState] = useState('home');
 
   const user = useSelector((state) => state.auth.user);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -41,7 +43,7 @@ const Navbar = () => {
             </li>
 
             {/* Author tab */}
-            {user && (
+            {user?.role === USER && (
               <li className='nav nav-item'>
                 <Link
                   to='/authors'
@@ -58,10 +60,19 @@ const Navbar = () => {
                 </Link>
               </li>
             )}
+
+            {user?.role === LIBRARY_INCHARGE && (
+              <li
+                className='nav btn navbar-brand'
+                style={{ cursor: 'default' }}
+              >
+                Library Incharge
+              </li>
+            )}
           </ul>
 
           {/* My Profile tab */}
-          {user ? (
+          {user?.role === USER && (
             <ul className='navbar-nav ms-auto mb-2 mb-lg-0'>
               <li className='nav nav-item'>
                 <Link
@@ -103,7 +114,39 @@ const Navbar = () => {
                 </Link>
               </li>
             </ul>
-          ) : (
+          )}
+
+          {user?.role === LIBRARY_INCHARGE && (
+            <ul className='navbar-nav ms-auto mb-2 mb-lg-0'>
+              <li className='nav nav-item'>
+                <Link
+                  to='/allIssuedBooks'
+                  onClick={() => changeState('allIssuedBooks')}
+                  className={
+                    state === 'allIssuedBooks'
+                      ? 'btn navbar-brand nav-link active'
+                      : 'btn navbar-brand nav-link'
+                  }
+                  aria-current='page'
+                >
+                  All Issued Books
+                </Link>
+              </li>
+
+              <li className='nav nav-item'>
+                <Link
+                  onClick={() => logout()}
+                  className='btn navbar-brand nav-link'
+                  aria-current='page'
+                >
+                  Logout
+                </Link>
+              </li>
+            </ul>
+          )}
+
+          {/* Login Buttons */}
+          {!user && (
             <ul className='navbar-nav ms-auto mb-2 mb-lg-0'>
               <li className='nav nav-item'>
                 <Link

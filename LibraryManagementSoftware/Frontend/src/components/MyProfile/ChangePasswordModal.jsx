@@ -62,6 +62,12 @@ const ChangePasswordModal = () => {
           payload: { user: response.data.data, token: response.data.token },
         });
 
+        localStorage.setItem('user', JSON.stringify(response.data.data));
+        localStorage.setItem('token', response.data.token);
+
+        axios.defaults.headers['Authorization'] =
+          'Bearer ' + response.data.token;
+
         reset({ password: '', newPassword: '', confirmNewPassword: '' });
 
         setTimeout(() => handleClose(), 2000);
