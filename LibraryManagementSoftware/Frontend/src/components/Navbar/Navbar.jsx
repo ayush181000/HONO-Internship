@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
@@ -22,6 +23,7 @@ const Navbar = () => {
   const logout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
+    axios.defaults.headers['Authorization'] = '';
     dispatch({ type: AUTH_LOGOUT });
     navigate('/');
   };
@@ -38,7 +40,9 @@ const Navbar = () => {
                 className='btn navbar-brand nav-link'
                 onClick={() => changeState('home')}
               >
-                The Book Store
+                {user?.role === LIBRARY_INCHARGE
+                  ? 'Librarian Dashboard'
+                  : 'The Book Store'}
               </Link>
             </li>
 
@@ -58,15 +62,6 @@ const Navbar = () => {
                 >
                   Authors
                 </Link>
-              </li>
-            )}
-
-            {user?.role === LIBRARY_INCHARGE && (
-              <li
-                className='nav btn navbar-brand'
-                style={{ cursor: 'default' }}
-              >
-                Library Incharge
               </li>
             )}
           </ul>

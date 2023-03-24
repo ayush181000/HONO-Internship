@@ -1,4 +1,6 @@
 import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import Navbar from './components/Navbar/Navbar';
@@ -8,18 +10,16 @@ import MyProfile from './components/MyProfile/MyProfile';
 import Author from './components/Author/Author/Author';
 import Login from './components/Login/Login';
 import SearchPage from './components/SearchPage/SearchPage';
-
-import { useDispatch, useSelector } from 'react-redux';
-import { AUTH_LOADED } from './redux/auth/reducer';
+import TransactionViewScreen from './components/TransactionViewScreen/TransactionViewScreen';
+import MyIssuedBook from './components/My Issued Book/MyIssuedBook';
 
 import './index.css';
-import MyIssuedBook from './components/My Issued Book/MyIssuedBook';
-import axios from 'axios';
+import { AUTH_LOADED } from './redux/auth/reducer';
 import { LIBRARY_INCHARGE } from './roles';
-import AllIssuedBooks from './components/AllIssuedBooks/AllIssuedBooks';
 
 const App = () => {
   const dispatch = useDispatch();
+  const userState = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     if (localStorage.getItem('user') && localStorage.getItem('token')) {
@@ -30,9 +30,8 @@ const App = () => {
 
       dispatch({ type: AUTH_LOADED, payload: { user, token } });
     }
-  }, [dispatch]);
-
-  const userState = useSelector((state) => state.auth.user);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <BrowserRouter>
@@ -57,11 +56,23 @@ const App = () => {
           path='search/:option/:searchText'
           element={!userState ? <Navigate to='/' /> : <SearchPage />}
         />
-        <Route
+
+        {/* <Route
           path='allIssuedBooks'
           element={
             userState && userState.role === LIBRARY_INCHARGE ? (
               <AllIssuedBooks />
+            ) : (
+              <Navigate to='/' />
+            )
+          }
+        /> */}
+
+        <Route
+          path='allIssuedBooks'
+          element={
+            userState && userState.role === LIBRARY_INCHARGE ? (
+              <TransactionViewScreen />
             ) : (
               <Navigate to='/' />
             )

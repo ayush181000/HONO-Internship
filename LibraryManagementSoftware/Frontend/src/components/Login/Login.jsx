@@ -60,6 +60,8 @@ const Login = () => {
 
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.data));
+        axios.defaults.headers['Authorization'] =
+          'Bearer ' + response.data.token;
 
         dispatch({
           type: AUTH_LOGIN_SUCCESS,

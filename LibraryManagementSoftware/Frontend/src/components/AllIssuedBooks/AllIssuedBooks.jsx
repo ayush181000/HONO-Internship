@@ -56,7 +56,7 @@ const AllIssuedBooks = () => {
                   <td>{item._id.toString()}</td>
                   <td>{status.charAt(0).toUpperCase() + status.slice(1)}</td>
                   <Link
-                    to={`/authors/${item.book.author}`}
+                    to={`/book/${item.book._id}`}
                     style={{ all: 'unset', cursor: 'default' }}
                   >
                     <td>{item.book.title}</td>

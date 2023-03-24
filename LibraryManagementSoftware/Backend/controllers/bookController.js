@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler';
 import moment from 'moment';
+import mongoose from "mongoose";
 import Book from "../models/bookModel.js";
 import Transaction from "../models/transactionModel.js";
 import createBookValidator from "../validators/createBookValidator.js";
@@ -266,43 +267,55 @@ const payFine = asyncHandler(async (req, res) => {
 // @desc    Get all transactions (LIBRARIAN/ADMIN ONLY)
 // @route   GET /transactions
 const getAllTransactions = asyncHandler(async (req, res) => {
-    const status = 'issued' || req.query.status;
-    const pipeline = [
-        {
-            '$match': {
-                'status': status
-            }
-        }, {
-            '$lookup': {
-                'from': 'books',
-                'localField': 'bookId',
-                'foreignField': '_id',
-                'as': 'book'
-            }
-        }, {
-            '$lookup': {
-                'from': 'users',
-                'localField': 'userId',
-                'foreignField': '_id',
-                'as': 'user'
-            }
-        }, {
-            '$unwind': {
-                'path': '$user'
-            }
-        }, {
-            '$unwind': {
-                'path': '$book'
-            }
-        }, {
-            '$project': {
-                "user.password": 0,
-                "user.passwordChangedAt": 0,
-                "userId": 0,
-                "bookId": 0
-            }
+
+    const match = { status: 'issued' };
+
+    if (req.query.status) {
+        match.status = req.query.status;
+    }
+
+    if (req.query.bookId) {
+        match.bookId = mongoose.Types.ObjectId(req.query.bookId);
+    }
+
+    if (req.query.userId) {
+        match.userId = mongoose.Types.ObjectId(req.query.userId);
+    }
+
+    console.log(match)
+
+    const pipeline = [{
+        '$match': match
+    }, {
+        '$lookup': {
+            'from': 'books',
+            'localField': 'bookId',
+            'foreignField': '_id',
+            'as': 'book'
         }
-    ];
+    }, {
+        '$lookup': {
+            'from': 'users',
+            'localField': 'userId',
+            'foreignField': '_id',
+            'as': 'user'
+        }
+    }, {
+        '$unwind': {
+            'path': '$user'
+        }
+    }, {
+        '$unwind': {
+            'path': '$book'
+        }
+    }, {
+        '$project': {
+            "user.password": 0,
+            "user.passwordChangedAt": 0,
+            "userId": 0,
+            "bookId": 0
+        }
+    }];
 
     const transactions = await Transaction.aggregate(pipeline);
 

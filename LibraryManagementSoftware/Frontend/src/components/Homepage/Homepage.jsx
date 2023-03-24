@@ -17,7 +17,7 @@ const Homepage = () => {
 
   let { books, error, loading } = useSelector((state) => state.books);
   const limit = isAuthenticated ? -1 : 6;
-  console.log(isAuthenticated && user.role === 'user');
+  // console.log(isAuthenticated && user.role === 'user');
   useEffect(() => {
     fetchBooks(dispatch, limit);
   }, [dispatch, isAuthenticated, limit]);
@@ -46,10 +46,6 @@ const Homepage = () => {
           </button>
         </div>
       )}
-
-      {/* <div className='d-flex flex-column min-vh-100'>
-        <Footer />
-      </div> */}
     </>
   );
 };

@@ -71,8 +71,14 @@ const MyProfile = () => {
 
   const sumitPhotoHandler = () => {
     const file = image;
-
     if (!file) return;
+
+    const fileType = file['type'];
+    const validImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    if (!validImageTypes.includes(fileType)) {
+      alert('Image can only be of type jpeg, jpg or png');
+      return;
+    }
 
     const storageRef = ref(storage, `profile_image/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
