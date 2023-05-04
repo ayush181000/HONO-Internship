@@ -1,4 +1,0 @@
-Date: 15 Feb 2023
-
-1)  Used render to host the server
-2)  Used Postman for testing purposes

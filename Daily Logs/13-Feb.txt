@@ -1,5 +1,0 @@
-Date: 13 Feb 2023
-
-1)	Node installation - v18.13.0 installed on the system from the official website.
-2)	Npm installation - v9.3.0 installed on the system from the official website
-3)  Created Git Repository - https://github.com/ayush181000/HONO-Internship

@@ -268,7 +268,7 @@ const payFine = asyncHandler(async (req, res) => {
 // @route   GET /transactions
 const getAllTransactions = asyncHandler(async (req, res) => {
 
-    const match = { status: 'issued' };
+    const match = {};
 
     if (req.query.status) {
         match.status = req.query.status;

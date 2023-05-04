@@ -1,4 +1,0 @@
-Date: 16 Feb 2023
-
-1)  Add middlewares and error controllers
-2)  Add validation for creation of the author
